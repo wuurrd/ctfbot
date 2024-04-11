@@ -1,0 +1,21 @@
+name: CTFPoster
+on:
+  schedule:
+    - cron: "0 0 * * 1"
+
+jobs:
+  ctfpost:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Post to discord
+        run: |
+          python bot.py $DISCORD_URL
+        env:
+          DISCORD_URL: ${{ secrets.DISCORD_URL }}
