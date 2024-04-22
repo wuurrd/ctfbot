@@ -57,6 +57,42 @@ def gradient(weight: float) -> int:
 
 
 @app.command()
+def team_stats(webhook_url, team_id=279481):
+    req = requests.get(
+        f"https://ctftime.org/team/{team_id}", headers={"User-Agent": "Mozilla/5.0"}
+    )
+    req.raise_for_status()
+    rating_overall = (
+        req.content.split(b"Overall rating place:")[1]
+        .split(b"</b>")[0]
+        .split(b"<b>")[1]
+        .strip()
+    )
+    country_rating = (
+        req.content.split(b"Country place:")[1]
+        .split(b'<a href="/stats/NO">')[1]
+        .split(b"</a>")[0]
+        .strip()
+    )
+    print(rating_overall)
+    print(country_rating)
+
+    r = requests.post(
+        webhook_url,
+        json={
+            "content": "",
+            "embeds": [
+                {
+                    "description": f"Rating:\n\nOverall: **{rating_overall.decode()}**\nCountry: **{country_rating.decode()}**",
+                    "color": 0x00FFFF,
+                },
+            ],
+        },
+    )
+    r.raise_for_status()
+
+
+@app.command()
 def discord(webhook_url):
     feeds = parse_feed()
     cutoff = datetime.now() + timedelta(days=7)
@@ -86,6 +122,7 @@ def discord(webhook_url):
         },
     )
     r.raise_for_status()
+    team_stats(webhook_url)
 
 
 if __name__ == "__main__":
