@@ -16,6 +16,6 @@ jobs:
 
       - name: Post to discord
         run: |
-          python bot.py $DISCORD_URL
+          python bot.py discord $DISCORD_URL
         env:
           DISCORD_URL: ${{ secrets.DISCORD_URL }}
